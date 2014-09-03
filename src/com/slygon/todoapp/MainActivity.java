@@ -5,27 +5,17 @@ package com.slygon.todoapp;
 //import android.os.*;
 //import android.widget.*;
 
-import android.view.*;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
-import android.os.AsyncTask;
-import android.os.Bundle;
-import android.util.Log;
-import android.widget.EditText;
-import android.widget.TextView;
-import android.widget.Toast;
-import android.app.Activity;
-
-import org.json.JSONObject;
+import android.app.*;
+import android.net.*;
+import android.os.*;
+import android.util.*;
+import android.widget.*;
+import com.loopj.android.http.*;
+import java.io.*;
+import org.apache.http.*;
+import org.apache.http.client.*;
+import org.apache.http.client.methods.*;
+import org.apache.http.impl.client.*;
 import org.json.*;
 
 public class MainActivity extends Activity
@@ -56,7 +46,10 @@ public class MainActivity extends Activity
 		}
 
 		// call AsynTask to perform network operation on separate thread
-		new HttpAsyncTask().execute("http://hmkcode.appspot.com/rest/controller/get.json");
+//		new HttpAsyncTask().execute("http://hmkcode.appspot.com/rest/controller/get.json");
+		//new HttpAsyncTask().execute("http://elad-site.herokuapp.com/api/todos");
+		
+		
 	}
 
 	public static String GET(String url)
@@ -129,15 +122,18 @@ public class MainActivity extends Activity
 			
 			try
 			{
-				
+				//etResponse.setText(result);
 				JSONObject json = new JSONObject(result); // convert String to JSONObject
-				//etResponse.setText(json.toString(1));
 				
-				JSONArray articles = json.getJSONArray("articleList"); // get articles array
-				articles.length(); // --> 2
-				articles.getJSONObject(0); // get first article in the array
-				articles.getJSONObject(0).names(); // get first article keys [title,url,categories,tags]
-				articles.getJSONObject(0).getString("url"); // return an article url
+				//JSONArray g = new JSONArray(result);
+				etResponse.setText(json.toString(1));
+				
+				
+//				JSONArray articles = json.getJSONArray("articleList"); // get articles array
+//				articles.length(); // --> 2
+//				articles.getJSONObject(0); // get first article in the array
+//				articles.getJSONObject(0).names(); // get first article keys [title,url,categories,tags]
+//				articles.getJSONObject(0).getString("url"); // return an article url
 			}
 			catch (JSONException e)
 			{
@@ -147,4 +143,30 @@ public class MainActivity extends Activity
 		
 		
 	}
+}
+
+class TodoClientUsage {
+    public void getPublicTimeline() throws JSONException {
+        TodoClient.get("statuses/public_timeline.json", null, new JsonHttpResponseHandler() {
+				@Override
+				public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+					// If the response is JSONObject instead of expected JSONArray
+				}
+
+				@Override
+				public void onSuccess(int statusCode, Header[] headers, JSONArray timeline) {
+					// Pull out the first event on the public timeline
+					try
+					{
+						JSONObject firstEvent = (JSONObject) timeline.get(0);
+					}
+					catch (JSONException e)
+					{}
+					String tweetText =(String) firstEvent.getString("text").;
+
+					// Do something with the response
+					System.out.println(tweetText);
+				}
+			});
+    }
 }
